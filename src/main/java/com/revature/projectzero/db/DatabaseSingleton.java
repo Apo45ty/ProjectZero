@@ -3,6 +3,7 @@ package com.revature.projectzero.db;
 import java.util.List;
 
 import com.revature.projectzero.accounts.Account;
+import com.revature.projectzero.accounts.Transaction;
 import com.revature.projectzero.accounts.User;
 
 public interface DatabaseSingleton {
@@ -12,6 +13,12 @@ public interface DatabaseSingleton {
 	 * @return
 	 */
 	List<Account> getUserAccounts(User u,int page);
+	/**
+	 * 
+	 * @param u
+	 * @return
+	 */
+	List<Transaction> getAccountTransactions(Account a,int page);
 	/**
 	 * 
 	 * @param id
@@ -37,6 +44,11 @@ public interface DatabaseSingleton {
 	 * @param a
 	 */
 	void update(Account a);
+	/**
+	 * 
+	 * @param a
+	 */
+	void update(Transaction t);
 
 	/**
 	 * 
@@ -49,6 +61,11 @@ public interface DatabaseSingleton {
 	 * @param a
 	 */
 	void create(Account a);
+	/**
+	 * 
+	 * @param a
+	 */
+	void create(Transaction t);
 
 	/**
 	 * 
@@ -61,6 +78,11 @@ public interface DatabaseSingleton {
 	 * @param a
 	 */
 	void delete(Account a);
+	/**
+	 * 
+	 * @param a
+	 */
+	void delete(Transaction t);
 
 	/**
 	 * 

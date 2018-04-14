@@ -15,6 +15,7 @@ import org.junit.Test;
 import com.revature.projectzero.accounts.Account;
 import com.revature.projectzero.accounts.User;
 import com.revature.projectzero.db.DatabaseSingleton;
+import com.revature.projectzero.db.MockDB;
 
 public class TestProgram {
 
@@ -38,6 +39,7 @@ public class TestProgram {
 
 	@Test
 	public void test04() {
+		//SETUP INPUT
 		ByteArrayInputStream in = new ByteArrayInputStream((
 				"useraccount\r\n" +
 				"Apo\r\n" +
@@ -47,76 +49,17 @@ public class TestProgram {
 				"ATapia\r\n" 
 		).getBytes());
 		System.setIn(in);
-		com.revature.projectzero.main.Program.createAccountLoop(out, new DatabaseSingleton() {
-			
-			public void update(Account a) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			public void update(User u) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			public boolean isUniqueUsername(String username) {
-				if(username.equalsIgnoreCase("Apo45ty")) {
-					return true;
-				}
-				else 
-					return false;
-			}
-			
-			public User getUserByUsernameAndPassword(String username, String password) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			public User getUserByID(long id) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			public List<Account> getUserAccounts(User u,int page) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			public List<User> getUnActivatedAccounts(int page) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			public Account getAccountByID(long accounID) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			public void delete(Account a) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			public void delete(User u) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			public void create(Account a) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			public void create(User u,String password) {
-				// TODO Auto-generated method stub
-				
-			}
-		});;
+		//SETUP MOCK DB
+		com.revature.projectzero.service.BankService.setDb(new MockDB());
+		//CAPTURE OUTPUT IN OUT VARIABLE
+		com.revature.projectzero.main.Program.createAccountLoop(out);
 		System.out.println(outContent.toString());
+		System.out.println("*******String*******");
+		//Test STRING
 		String s = "Please enter the type of account you wish to create\r\n" + 
-				"enter \"useraccount\" to create a user account\r\n" + 
-				"enter \"adminaccount\" to create a admin account\r\n" + 
-				"enter \"quit\" to go back to the main menu\r\n" + 
+				"enter \"useraccount(ua)\" to create a user account\r\n" + 
+				"enter \"adminaccount(aa)\" to create a admin account\r\n" + 
+				"enter \"quit(q)\" to go back to the main menu\r\n" + 
 				"\r\n" + 
 				"Enter username:\r\n" + 
 				"User name taken please pick another!\r\n" + 
@@ -125,8 +68,8 @@ public class TestProgram {
 				"Enter Name:\r\n" + 
 				"Enter Last Name:\r\n" + 
 				"Enter Password:\r\n" + 
-				"Account Creation Successful\r\n"
-				+ "\r\n" ;
+				"Account Creation Successful\r\n"  ;
+		System.out.println(s);
 		assertTrue(s.equals(outContent.toString()));
 	}
 	@Test

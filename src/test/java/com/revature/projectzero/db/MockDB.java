@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.revature.projectzero.accounts.Account;
 import com.revature.projectzero.accounts.AccountTypes;
+import com.revature.projectzero.accounts.Transaction;
 import com.revature.projectzero.accounts.User;
 
 public class MockDB implements DatabaseSingleton {
@@ -73,6 +74,30 @@ public class MockDB implements DatabaseSingleton {
 				new Account(1000, 0L, u, AccountTypes.savings04092018,false)
 		));
 		return a;
+	}
+
+	@Override
+	public List<Transaction> getAccountTransactions(Account a, int page) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void update(Transaction t) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void create(Transaction t) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void delete(Transaction t) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

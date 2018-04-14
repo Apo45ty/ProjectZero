@@ -73,5 +73,59 @@ public class User {
 		return "User [name=" + name + ", lname=" + lname + ", username=" + username + ", isAdmin=" + isAdmin
 				+ ", isActive=" + isActive + ", isDeleted=" + isDeleted + ", ID=" + ID + "]";
 	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (ID ^ (ID >>> 32));
+		result = prime * result + ((accounts == null) ? 0 : accounts.hashCode());
+		result = prime * result + (isActive ? 1231 : 1237);
+		result = prime * result + (isAdmin ? 1231 : 1237);
+		result = prime * result + (isDeleted ? 1231 : 1237);
+		result = prime * result + ((lname == null) ? 0 : lname.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (ID != other.ID)
+			return false;
+		if (accounts == null) {
+			if (other.accounts != null)
+				return false;
+		} else if (!accounts.equals(other.accounts))
+			return false;
+		if (isActive != other.isActive)
+			return false;
+		if (isAdmin != other.isAdmin)
+			return false;
+		if (isDeleted != other.isDeleted)
+			return false;
+		if (lname == null) {
+			if (other.lname != null)
+				return false;
+		} else if (!lname.equals(other.lname))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (username == null) {
+			if (other.username != null)
+				return false;
+		} else if (!username.equals(other.username))
+			return false;
+		return true;
+	}
+	
 	
 }
