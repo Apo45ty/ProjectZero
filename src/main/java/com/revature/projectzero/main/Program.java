@@ -210,17 +210,30 @@ public class Program {
 							out.println("Number not in range");
 							continue;
 						}
-						Account a = u.getAccounts().get(accountIndex);
-						BankService.getAccountTransactions(a, page);
-						out.println("You have the following accounts:");
-						for (int i = 0; i < a.getTran().size(); i++) {
-							Transaction trans = a.getTran().get(i);
-							out.println(i + ") " + trans);
-						}
-						out.println("Press \"enter\" to continue");
-						input = in.nextLine();
-						if (input.equalsIgnoreCase("quit")||input.equalsIgnoreCase("q"))
-							continue;
+						int transPage = 0;
+						do {
+							Account a = u.getAccounts().get(accountIndex);
+							BankService.getAccountTransactions(a, transPage);
+							out.println("You have the following accounts:");
+							for (int i = 0; i < a.getTran().size(); i++) {
+								Transaction trans = a.getTran().get(i);
+								out.println(i + ") " + trans);
+							}
+							out.println("Press \"quit(q)\" to quit");
+							out.println("You can view more accounts by typing \"nextpage(np)\" \"previouspage(pp)\"");
+							
+							input = in.nextLine();
+							if (input.equalsIgnoreCase("quit")||input.equalsIgnoreCase("q"))
+								break;
+							if(input.equalsIgnoreCase("previouspage")||input.equalsIgnoreCase("pp")) {
+								transPage=transPage==0?0:transPage-1;
+								continue;
+							}
+							else if (input.equalsIgnoreCase("nextPage")||input.equalsIgnoreCase("np")) {
+								transPage++;
+								continue;
+							}
+						}while(true);
 					} catch (NumberFormatException e) {
 						log.error("ClassCastException pointer exception inside of userLoggedInLoop");
 						out.println("Not a number entered");
