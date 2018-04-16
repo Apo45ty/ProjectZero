@@ -23,7 +23,7 @@ import com.revature.projectzero.accounts.Transaction;
 import com.revature.projectzero.accounts.User;
 
 public class BankDB implements DatabaseSingleton {
-	public static final int RESULTS_PER_PAGE_ACTIVE_ACCOUNTS = 25;
+	public static final int RESULTS_PER_PAGE = 25;
 	final static Logger log = Logger.getLogger(BankDB.class);
 
 	private Connection con;
@@ -37,12 +37,12 @@ public class BankDB implements DatabaseSingleton {
 		DatabaseSingleton db = BankDB.getInstance();
 //		 Account a = db.getAccountByID(1);
 		// System.out.println(a);
-		// User u = db.getUserByID(1);
-		// System.out.println(u);
-		// if(u!=null) {
-		// u.setID(10);
-		// db.update(u);
-		// }
+//		 User u = db.getUserByID(1);
+//		 System.out.println(u);
+//		 if(u!=null) {
+//			 u.setID(10);
+//			 db.update(u,"Weblog1!");
+//		 }
 		// a.setBalance(2000.31415);;
 		// db.update(a);
 		// u=db.getUserByUsernameAndPassword("Apo45ty", "Weblog1!");
@@ -116,7 +116,7 @@ public class BankDB implements DatabaseSingleton {
 	public User getUserByID(long id) {
 		PreparedStatement getuser = null;
 		try {
-			getuser = con.prepareStatement("SELECT * FROM bankuser WHERE id = ? AND isDeleted=0");
+			getuser = con.prepareStatement("SELECT * FROM useraccount WHERE id = ? AND isDeleted=0");
 			getuser.setLong(1, id);
 
 			ResultSet rs = getuser.executeQuery();
@@ -180,7 +180,7 @@ public class BankDB implements DatabaseSingleton {
 	public void update(User u) {
 		PreparedStatement stmt = null;
 		try {
-			stmt = con.prepareStatement("UPDATE bankuser SET " + "id=?, " + "fname=?," + "lname=?," + "isAdmin=?,"
+			stmt = con.prepareStatement("UPDATE useraccount SET " + "id=?, " + "fname=?," + "lname=?," + "isAdmin=?,"
 					+ "isActive=?," + "isDeleted=?," + "username=? " + "WHERE username=?");
 			stmt.setLong(1, u.getID());
 			stmt.setString(2, u.getName());
@@ -250,7 +250,7 @@ public class BankDB implements DatabaseSingleton {
 		PreparedStatement stmt = null;
 		try {
 			stmt = con.prepareStatement(
-					"INSERT INTO bankuser VALUES(" + "?," + "?," + "?," + "?," + "?," + "?," + "?," + "?" + ")");
+					"INSERT INTO useraccount VALUES(" + "?," + "?," + "?," + "?," + "?," + "?," + "?," + "?" + ")");
 			stmt.setLong(1, u.getID());
 			stmt.setString(2, u.getName());
 			stmt.setString(3, password);
@@ -335,13 +335,13 @@ public class BankDB implements DatabaseSingleton {
 	 * java.lang.String, java.lang.String)
 	 */
 	public User getUserByUsernameAndPassword(String username, String password) {
-		PreparedStatement getuser = null;
+		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
-			getuser = con.prepareStatement("SELECT * FROM bankuser WHERE username = ? AND password = ? ");
-			getuser.setString(1, username);
-			getuser.setString(2, password);
-			rs = getuser.executeQuery();
+			stmt = con.prepareStatement("SELECT * FROM useraccount WHERE username = ? AND password = ? ");
+			stmt.setString(1, username);
+			stmt.setString(2, password);
+			rs = stmt.executeQuery();
 			if (rs.next())
 				return new User(rs.getString("fname"), rs.getString("lname"), rs.getString("username"),
 						rs.getBoolean("isAdmin"), rs.getBoolean("isActive"), rs.getBoolean("isDeleted"),
@@ -350,9 +350,10 @@ public class BankDB implements DatabaseSingleton {
 			log.error(e1);
 			return null;
 		} finally {
-			if (getuser != null)
+			if (stmt != null)
 				try {
-					getuser.close();
+					stmt.close();
+					rs.close();
 				} catch (SQLException e1) {
 					log.error(e1);
 				}
@@ -365,19 +366,19 @@ public class BankDB implements DatabaseSingleton {
 	 * 
 	 */
 	public boolean isUniqueUsername(String username) {
-		PreparedStatement getuser = null;
+		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
-			getuser = con.prepareStatement("SELECT * FROM bankuser WHERE username = ?");
-			getuser.setString(1, username);
-			rs = getuser.executeQuery();
+			stmt = con.prepareStatement("SELECT * FROM useraccount WHERE username = ?");
+			stmt.setString(1, username);
+			rs = stmt.executeQuery();
 			return !rs.next();
-		} catch (NumberFormatException | SQLException e) {
+		} catch (SQLException e) {
 			log.error(e);
 		} finally {
-			if (getuser != null)
+			if (stmt != null)
 				try {
-					getuser.close();
+					stmt.close();
 				} catch (SQLException e1) {
 					log.error(e1);
 				}
@@ -389,18 +390,17 @@ public class BankDB implements DatabaseSingleton {
 	 * 
 	 */
 	public List<User> getUnActivatedAccounts(int page) {
-		int offset = page * RESULTS_PER_PAGE_ACTIVE_ACCOUNTS;
+		int offset = page * RESULTS_PER_PAGE;
 		PreparedStatement statement = null;
 		ResultSet rs = null;
 		List<User> result = null;
 		try {
-			statement = con.prepareStatement("SELECT *  FROM   bankuser u WHERE isDeleted=0 ORDER BY u.username OFFSET "
-					+ offset + " ROWS FETCH NEXT " + RESULTS_PER_PAGE_ACTIVE_ACCOUNTS + " ROWS ONLY");
+			statement = con.prepareStatement("SELECT *  FROM   useraccount u WHERE isDeleted=0 AND ISACTIVE=0 OFFSET "
+					+ offset + " ROWS FETCH NEXT " + RESULTS_PER_PAGE + " ROWS ONLY");
 			rs = statement.executeQuery();
 			result = new LinkedList<>();
 			while (rs.next()) {
-				if (!rs.getBoolean("isDeleted") && !rs.getBoolean("isActive"))
-					result.add(new User(rs.getString("fname"), rs.getString("lname"), rs.getString("username"),
+				result.add(new User(rs.getString("fname"), rs.getString("lname"), rs.getString("username"),
 							rs.getBoolean("isAdmin"), rs.getBoolean("isActive"), rs.getBoolean("isDeleted"),
 							rs.getLong("id")));
 			}
@@ -419,13 +419,13 @@ public class BankDB implements DatabaseSingleton {
 	}
 
 	public List<Account> getUserAccounts(User u, int page) {
-		int offset = page * RESULTS_PER_PAGE_ACTIVE_ACCOUNTS;
+		int offset = page * RESULTS_PER_PAGE;
 		PreparedStatement statement = null;
 		List<Account> result = null;
 		try {
 			statement = con.prepareStatement(
 					"SELECT *  FROM  account a WHERE a.owner=? AND isDeleted=0 ORDER BY a.owner OFFSET " + offset
-							+ " ROWS FETCH NEXT " + RESULTS_PER_PAGE_ACTIVE_ACCOUNTS + " ROWS ONLY");
+							+ " ROWS FETCH NEXT " + RESULTS_PER_PAGE + " ROWS ONLY");
 			statement.setString(1, u.getUsername());
 			ResultSet rs = statement.executeQuery();
 			result = new LinkedList<>();
@@ -450,13 +450,13 @@ public class BankDB implements DatabaseSingleton {
 
 	@Override
 	public List<Transaction> getAccountTransactions(Account a, int page) {
-		int offset = page * RESULTS_PER_PAGE_ACTIVE_ACCOUNTS;
+		int offset = page * RESULTS_PER_PAGE;
 		PreparedStatement statement = null;
 		List<Transaction> result = null;
 		try {
 			statement = con.prepareStatement(
 					"SELECT *  FROM  banktransaction ba WHERE ba.account_id=? AND ba.is_deleted=0 ORDER BY ba.account_id OFFSET "
-							+ offset + " ROWS FETCH NEXT " + RESULTS_PER_PAGE_ACTIVE_ACCOUNTS + " ROWS ONLY");
+							+ offset + " ROWS FETCH NEXT " + RESULTS_PER_PAGE + " ROWS ONLY");
 			statement.setLong(1, a.getId());
 			ResultSet rs = statement.executeQuery();
 			result = new LinkedList<>();
@@ -539,6 +539,66 @@ public class BankDB implements DatabaseSingleton {
 	public void delete(Transaction t) {
 		t.setDeleted(true);
 		update(t);
+	}
+
+	@Override
+	public List<User> getAllUsers(int page) {
+		int offset = page * RESULTS_PER_PAGE;
+		PreparedStatement statement = null;
+		ResultSet rs = null;
+		List<User> result = null;
+		try {
+			statement = con.prepareStatement("SELECT *  FROM  useraccount u WHERE isDeleted=0 ORDER BY u.username OFFSET "
+					+ offset + " ROWS FETCH NEXT " + RESULTS_PER_PAGE + " ROWS ONLY");
+			rs = statement.executeQuery();
+			result = new LinkedList<>();
+			while (rs.next()) {
+				result.add(new User(rs.getString("fname"), rs.getString("lname"), rs.getString("username"),
+							rs.getBoolean("isAdmin"), rs.getBoolean("isActive"), rs.getBoolean("isDeleted"),
+							rs.getLong("id")));
+			}
+			return result;
+		} catch (SQLException e) {
+			log.error(e);
+		} finally {
+			if (statement != null)
+				try {
+					statement.close();
+				} catch (SQLException e1) {
+					log.error(e1);
+				}
+		}
+		return result;
+	}
+
+	@Override
+	public void update(User u, String password) {
+		PreparedStatement stmt = null;
+		try {
+			stmt = con.prepareStatement("UPDATE useraccount SET " + "id=?, " + "fname=?," + "lname=?," + "isAdmin=?,"
+					+ "isActive=?," + "isDeleted=?," + "username=?,password=?  " + "WHERE username=?");
+			stmt.setLong(1, u.getID());
+			stmt.setString(2, u.getName());
+			stmt.setString(3, u.getLname());
+			stmt.setBoolean(4, u.isAdmin());
+			stmt.setBoolean(5, u.isActive());
+			stmt.setBoolean(6, u.isDeleted());
+			stmt.setString(7, u.getUsername());
+			stmt.setString(8, password);
+			stmt.setString(9, u.getUsername());
+			stmt.executeUpdate();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (stmt != null)
+				try {
+					stmt.close();
+				} catch (SQLException e1) {
+					log.error(e1);
+				}
+		}
 	}
 
 }

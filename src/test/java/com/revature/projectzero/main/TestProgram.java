@@ -52,7 +52,7 @@ public class TestProgram {
 		//SETUP MOCK DB
 		com.revature.projectzero.service.BankService.setDb(new MockDB());
 		//CAPTURE OUTPUT IN OUT VARIABLE
-		com.revature.projectzero.main.Program.createAccountLoop(out);
+		(new CreateAccountBehavior()).execute(out);
 		System.out.println(outContent.toString());
 		System.out.println("*******String*******");
 		//Test STRING
@@ -77,7 +77,7 @@ public class TestProgram {
 		ByteArrayInputStream in = new ByteArrayInputStream((
 		"quit\r\n").getBytes());
 		System.setIn(in);
-		com.revature.projectzero.main.Program.mainLoop(out);
+		(new MainMenuBehavior()).execute(out);
 		System.out.println(outContent.toString());
 		assertTrue(com.revature.projectzero.main.Program.isDone());
 	}
@@ -86,7 +86,7 @@ public class TestProgram {
 		ByteArrayInputStream in = new ByteArrayInputStream((
 		"createaccount\r\n").getBytes());
 		System.setIn(in);
-		com.revature.projectzero.main.Program.mainLoop(out);
+		(new MainMenuBehavior()).execute(out);
 		System.out.println(outContent.toString());
 		assertTrue(com.revature.projectzero.main.Program.getState()==ProgramState.createAccountLoop);
 	}
@@ -96,7 +96,7 @@ public class TestProgram {
 		ByteArrayInputStream in = new ByteArrayInputStream((
 		"login\r\n").getBytes());
 		System.setIn(in);
-		com.revature.projectzero.main.Program.mainLoop(out);
+		(new MainMenuBehavior()).execute(out);
 		System.out.println(outContent.toString());
 		assertTrue(com.revature.projectzero.main.Program.getState()==ProgramState.userLoginLoop);
 	}

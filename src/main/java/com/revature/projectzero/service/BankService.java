@@ -36,6 +36,10 @@ public class BankService {
 		db.update(u);
 	}
 
+	public static void update(User u, String pass) {
+		db.update(u, pass);
+	}
+	
 	public static void update(Account a) {
 		db.update(a);
 	}
@@ -81,5 +85,7 @@ public class BankService {
 	public static List<Transaction> getAccountTransactions(Account a, int page) {
 		return db.getAccountTransactions(a, page);
 	}
-	
+	public static List<User> getAllUsers(int page){
+		return db.getAllUsers(page);
+	}
 }

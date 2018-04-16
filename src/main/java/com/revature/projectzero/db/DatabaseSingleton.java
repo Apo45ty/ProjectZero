@@ -10,12 +10,14 @@ public interface DatabaseSingleton {
 	/**
 	 * 
 	 * @param u
+	 * @param page
 	 * @return
 	 */
 	List<Account> getUserAccounts(User u,int page);
 	/**
 	 * 
-	 * @param u
+	 * @param a
+	 * @param page
 	 * @return
 	 */
 	List<Transaction> getAccountTransactions(Account a,int page);
@@ -38,6 +40,11 @@ public interface DatabaseSingleton {
 	 * @param u
 	 */
 	void update(User u);
+	/**
+	 * 
+	 * @param u
+	 */
+	void update(User u,String password);
 
 	/**
 	 * 
@@ -53,6 +60,7 @@ public interface DatabaseSingleton {
 	/**
 	 * 
 	 * @param u
+	 * @param password
 	 */
 	void create(User u,String password);
 
@@ -101,7 +109,14 @@ public interface DatabaseSingleton {
 
 	/**
 	 * 
+	 * @param page
 	 * @return
 	 */
 	List<User> getUnActivatedAccounts(int page);
+	/**
+	 * 
+	 * @param page
+	 * @return
+	 */
+	List<User> getAllUsers(int page);
 }
